@@ -3,6 +3,7 @@ import uuid
 from unittest.case import _id
 from warnings import cls
 
+from flask import session
 from pymongo.database import Database
 
 __author__ = 'Koushik'
@@ -38,15 +39,28 @@ class User(object):
         if user is None:
             new_user = cls(email, password)
             new_user.save_to_mongo()
+            session['email'] = email
             return True
         else:
             return False
 
-    def login(self):
-        pass
+    @staticmethod
+    def login(user_email):
+        session['email'] = user_email
+
+    @staticmethod
+    def logout():
+        session['email'] = None
 
     def get_blogs(self):
         pass
 
     def json(self):
-        pass
+        return {
+            "email":self.email,
+            "_id":self._id,
+            "password":self.password
+        }
+
+    def save_to_mongo(self):
+        Database.insert("users", self.json())
