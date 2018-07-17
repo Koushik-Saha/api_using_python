@@ -1,3 +1,4 @@
+import datetime
 import email
 import uuid
 from unittest.case import _id
@@ -5,6 +6,8 @@ from warnings import cls
 
 from flask import session
 from pymongo.database import Database
+
+from Src.models.blog import Blog
 
 __author__ = 'Koushik'
 
@@ -53,7 +56,20 @@ class User(object):
         session['email'] = None
 
     def get_blogs(self):
-        pass
+        return Blog.find_by_author_id(self._id)
+
+    def new_blog(self, title, description):
+        blog = Blog(author=self.email,
+                    title=title,
+                    description=description,
+                    author_id=self._id)
+        blog.save_to_mongo()
+    @staticmethod
+    def new_post(blog_id, title, content, date=datetime.datetime.utcnow()):
+        blog = Blog.from_mongo(blog_id)
+        blog.new_post(title=title,
+                      content=content,
+                      date=date)
 
     def json(self):
         return {
