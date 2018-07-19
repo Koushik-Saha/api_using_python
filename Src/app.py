@@ -1,18 +1,29 @@
-from pymongo.database import Database
-
+from Src.common.database import Database
+from Src.models.blog import Blog
+from Src.models.post import Post
 from Src.models.user import User
 
 __author__ = 'Koushik'
 
-from flask import Flask, render_template, request, session
+from flask import Flask, render_template, request, session, make_response
 
 app = Flask(__name__)
 app.secret_key = "Koushik"
 
 
 @app.route('/')
-def hello_method():
+def home_template():
+    return render_template('home.html')
+
+
+@app.route('/')
+def login_template():
     return render_template('login.html')
+
+
+@app.route('/register')
+def register_template():
+    return render_template('register.html')
 
 
 @app.before_first_request
@@ -20,7 +31,7 @@ def initialize_database():
     Database.initialize()
 
 
-@app.route('/login', methods=['POST'])
+@app.route('/auth/login', methods=['POST'])
 def login_user():
     email = request.form['email']
     password = request.form['password']
@@ -33,5 +44,15 @@ def login_user():
     return render_template("profile.html", email=session['email'])
 
 
+@app.route('/auth/register', methods=['POST'])
+def register_user():
+    email = request.form['email']
+    password = request.form['password']
+
+    User.register(email, password)
+
+    return render_template("profile.html", email=session['email'])
+
+
 if __name__ == '__main__':
-    app.run(port=4995)
+    app.run(port=4990)
