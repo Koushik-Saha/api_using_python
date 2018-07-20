@@ -3,9 +3,11 @@
 <div class="container">
     <h2>{{ blog_title }}'s blogs</h2>
         {%for post in posts %}
-        <h3>{{ post.title }}</h3>
-        <p>{{ post.content }}</p>
-        <p>{{ post.author }}</p>
-        <hr>
+            <h3>{{ post.title }}</h3>
+            <p>{{ post.content }}</p>
+            <p>{{ post.author }}</p>
+            <hr>
+        <h4>There are not any posts yet</h4>
+
 </div>
 {% endblock %}
