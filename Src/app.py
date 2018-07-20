@@ -82,13 +82,28 @@ def create_new_blog():
         return make_response(user_blogs(user._id))
 
 
+@app.route('/posts/new<string:blog_id>', methods=['POST', 'GET'])
+def create_new_post(blog_id):
+    if request.method == 'GET':
+        return render_template('new_post.html', blog_id=blog_id)
+    else:
+        title = request.form['title']
+        description = request.form['content']
+        user = User.get_by_email(session['email'])
+
+        new_blog = Blog(blog_id, title, description, user.email)
+        new_blog.save_to_mongo()
+
+        return make_response(blog_posts(blog_id))
+
+
 @app.route('/posts/<string:blog_id>')
 def blog_posts(blog_id):
     blog = Blog.from_mongo(blog_id)
     posts = blog.get_posts()
 
-    return render_template('posts.html', posts=posts, blog_title=blog.title)
+    return render_template('posts.html', posts=posts, blog_title=blog.title, blog_id=blog._id)
 
 
 if __name__ == '__main__':
-    app.run(port=4120)
+    app.run(port=4999)
